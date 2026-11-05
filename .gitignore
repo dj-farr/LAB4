@@ -1,0 +1,58 @@
+# VCS generated files
+simv
+simv.daidir/
+csrc/
+ucli.key
+vc_hdrs.h
+
+# Verdi / FSDB generated files
+novas.fsdb
+novas_dump.log
+verdiLog/
+verdi_config.txt
+*.fsdb
+*.vpd
+
+# Synopsys generated files
+*.syn
+*.pvl
+*.mr
+*.svf
+*.log
+*.out
+
+# Compilation / simulation temporary files
+*.key
+*.dump
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Coverage files
+simv.vdb/
+*.vdb
+urgReport/
+coverage/
+
+# Core dumps
+core
+core.*
+*.core
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.
+
+# Neovim/Vim swap and temporary files
+*.swp
+*.swo
+*.swn
+*~
+
+# Temporary files
+tmp/
+temp/
