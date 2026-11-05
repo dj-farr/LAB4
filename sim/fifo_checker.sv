@@ -20,9 +20,22 @@ module async_fifo_checker #(
     int expected_data;
     int errors = 0;
 
+    // track each time golden becomes empty or full
+    // to avoid counting old delay after a brief transition
+    int empty_event = 0;
+    int full_event = 0;
+    int seen_empty_event = 0;
+    int seen_full_event = 0;
+    int empty_wait = 0;
+    int full_wait = 0;
+    bit empty_reported = 0;
+    bit full_reported = 0;
+
     // Reset the golden model
     always @(negedge wrst_n) begin
         fifo_init();
+        empty_event = 0;
+        full_event = 0;
     end
 
     // Check accepted writes
@@ -31,6 +44,9 @@ module async_fifo_checker #(
             if (!push(int'(wdata))) begin
                 $error("Golden model rejected an accepted write");
                 errors++;
+            end
+            else if (is_full()) begin
+                full_event++;
             end
         end
     end
@@ -49,31 +65,80 @@ module async_fifo_checker #(
                        $time, rdata, expected_data);
                 errors++;
             end
+            if (is_empty())
+                empty_event++;
         end
     end
-    // Check empty flag
-    // Updates occurs at the rising edge, so we check at the falling edge.
-    // rempty and takes 2 clock cycles to go low, so we only check when
-    // the golden model is empty and rempty should be high.
+    // Check that rempty is high when the golden model is empty.
+    // Check at the falling edge to let the signals update.
     always @(negedge rclk) begin
-        if (rrst_n && wrst_n) begin
-            if (is_empty() && !rempty) begin
-                $error("EMPTY FLAG ERROR: Golden model is empty, but rempty = 0");
-                errors++;
+        if (!rrst_n && !wrst_n) begin
+            empty_wait = 0;
+            empty_reported = 0;
+            seen_empty_event = empty_event;
+        end 
+        else begin
+            if (seen_empty_event != empty_event) begin 
+                empty_wait = 0;
+                empty_reported = 0;
+                seen_empty_event = empty_event;
             end
+            if (is_empty()) begin
+                empty_wait = 0;
+                empty_reported = 0;
+                if (rempty !== 1'b1) begin
+                    $error("EMPTY FLAG ERROR: Golden model is empty, but rempty = 0");
+                    errors++;
+                end
+            end
+            else if (rempty !== 1'b0) begin
+                empty_wait++;
+                if (empty_wait > 3 && !empty_reported) begin
+                    $error("EMPTY FLAG ERROR: rempty stayed high too long");
+                    errors++;
+                    empty_reported = 1;
+                end 
+            end 
+            else begin
+                empty_wait = 0;
+                empty_reported = 0;
+            end 
         end
     end
-
-    // Check full flag
-    // wfull takes 2 wclk cycles to go low, so we only check when
-    // the golden model is full and wfull should be high.
+    // Check that wfull is high when the golden model is full.
+    // Check at the falling edge to let the signals update.
     always @(negedge wclk) begin
-        if (wrst_n && rrst_n) begin
-            if (is_full() && !wfull) begin
-                $error("FULL FLAG ERROR: Golden model is full, but wfull = 0");
-                errors++;
+        if (!wrst_n || !rrst_n) begin
+            full_wait = 0;
+            full_reported = 0;
+            seen_full_event = full_event;
+        end
+        else begin
+            if (seen_full_event != full_event) begin
+                full_wait = 0;
+                full_reported = 0;
+                seen_full_event = full_event;
+            end
+            if (is_full()) begin
+                full_wait = 0;
+                full_reported = 0;
+                if (wfull !== 1'b1) begin
+                    $error("FULL FLAG ERROR: Golden model is full, but wfull = %b", wfull);
+                    errors++;
+                end
+            end
+            else if (wfull !== 1'b0) begin
+                full_wait++;
+                if (full_wait > 3 && !full_reported) begin
+                    $error("FULL FLAG ERROR: wfull stayed high too long");
+                    errors++;
+                    full_reported = 1;
+                end
+            end
+            else begin
+                full_wait = 0;
+                full_reported = 0;
             end
         end
     end
 endmodule
-

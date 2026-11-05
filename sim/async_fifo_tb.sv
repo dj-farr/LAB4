@@ -31,6 +31,36 @@ module async_fifo_tb;
     async_fifo #(DSIZE, ASIZE) DUT (.*);
     async_fifo_checker #(DSIZE, ASIZE) CHECKER (.*);
 
+
+    // drop settings
+    integer drop_n = 0;
+    integer write_count = 0;
+
+    initial begin
+        void'($value$plusargs("drop_n=%d", drop_n));
+    end
+
+    // Drop every Nth write without changing the FIFO
+    always @(negedge wclk) begin
+        #1; // Let the testbench update winc first
+
+        release DUT.mem_if.wclken;
+
+        if (!wrst_n) begin
+            write_count = 0;
+        end
+        else if (winc && !wfull) begin
+            write_count++;
+
+            if (drop_n > 0 && write_count % drop_n == 0) begin
+                force DUT.mem_if.wclken = 1'b0;
+                $display("BUG: Dropping write %0d at %0t",
+                        write_count, $time);
+            end
+        end
+    end
+
+
     always @(posedge wclk) // fill FIFO with incrementing numbers for each write
         if (winc && !wfull) wdata <= wdata + 1;
     
