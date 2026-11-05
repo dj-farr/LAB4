@@ -8,6 +8,8 @@ vc_hdrs.h
 # Verdi / FSDB generated files
 novas.fsdb
 novas_dump.log
+novas.conf
+novas.rc
 verdiLog/
 verdi_config.txt
 *.fsdb
@@ -28,6 +30,7 @@ verdi_config.txt
 *.bak
 *.swp
 *.swo
+*.o
 
 # Coverage files
 simv.vdb/
