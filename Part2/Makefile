@@ -73,6 +73,6 @@ waves_verdi:
 
 clean:
 	\rm -rf *.log *.h csrc DVEFiles simv simv.daidir ucli.key vcdplus.vpd \
-	        *.syn *.pvl *.mr *.svf command.log *.txt \
+	        *.syn *.pvl *.mr *.svf command.log *.txt *.o \
 	        *.fsdb novas.conf novas.rc novas.log novas_dump.log verdi_config_file verdiLog
 
