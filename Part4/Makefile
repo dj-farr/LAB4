@@ -20,7 +20,7 @@ all: compile sim1 sim2 sim3
 compile:
 	$(VCS) $(RTL) $(TB) -o simv -l compile.log
 compile_p2:
-	$(VCS) $(RTL) even_odd_alt.sv $(TB2) -top even_odd_alt_tb -o simv -l compile.log
+	$(VCS) $(RTL) even_odd_alt.sv even_odd_if.sv $(TB2) -top even_odd_alt_tb -o simv -l compile.log
 
 # compile and sim
 compile_sim1: compile sim1

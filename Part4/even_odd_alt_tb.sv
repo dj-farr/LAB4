@@ -46,6 +46,7 @@ module even_odd_alt_tb;
 
     // instantiate DUT
     even_odd_alt  #(DSIZE, ASIZE) DUT (.*);
+	even_odd_if #(DSIZE) eo_if (.*);
 
     always @(posedge clk) begin
 		if (w_en) begin
