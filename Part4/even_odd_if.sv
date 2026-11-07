@@ -17,5 +17,9 @@ interface even_odd_if #(parameter DSIZE = 8) (
 
     a_even_then_odd: assert property (
         even_odd_alt_tb.DUT.e_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.ODD
-    ) else $error("next read didn't switch to odd after an even read")
+    ) else $error("next read didn't switch to odd after an even read");
+
+    a_dout_hold: assert property (
+        !(even_odd_alt_tb.DUT.e_rinc || even_odd_alt_tb.DUT.o_rinc) |=> $stable(dout)
+    ) else $error("dout changed without a successful read");
 endinterface
