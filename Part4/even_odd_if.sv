@@ -19,6 +19,10 @@ interface even_odd_if #(parameter DSIZE = 8) (
         even_odd_alt_tb.DUT.e_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.ODD
     ) else $error("next read didn't switch to odd after an even read");
 
+    a_odd_then_even: assert property (
+        even_odd_alt_tb.DUT.o_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.EVEN
+    ) else $error("next read didn't switch to even after an odd read");
+
     a_dout_hold: assert property (
         !(even_odd_alt_tb.DUT.e_rinc || even_odd_alt_tb.DUT.o_rinc) |=> $stable(dout)
     ) else $error("dout changed without a successful read");
@@ -26,4 +30,8 @@ interface even_odd_if #(parameter DSIZE = 8) (
     a_even_empty_rptr: assert property (
         r_en && even_odd_alt_tb.DUT.e_empty |=> $stable(even_odd_alt_tb.DUT.even_fifo.rptr)
     ) else $error("even read pointer moved while the FIFO was empty");
+
+    a_odd_empty_rptr: assert property (
+        r_en && even_odd_alt_tb.DUT.o_empty |=> $stable(even_odd_alt_tb.DUT.odd_fifo.rptr)
+    ) else $error("odd read pointer moved while the FIFO was empty");
 endinterface
