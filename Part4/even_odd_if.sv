@@ -15,5 +15,7 @@ interface even_odd_if #(parameter DSIZE = 8) (
             even_odd_alt_tb.DUT.o_winc && !even_odd_alt_tb.DUT.e_winc
     ) else $error ("odd write did not only go to odd FIFO");
 
-    
+    a_even_then_odd: assert property (
+        even_odd_alt_tb.DUT.e_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.ODD
+    ) else $error("next read didn't switch to odd after an even read")
 endinterface
