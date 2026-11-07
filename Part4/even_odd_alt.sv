@@ -21,6 +21,10 @@ module even_odd_alt #(
 
     next_t next;
 
+	// read plusarg
+	int bug = 0;
+	initial void'($value$plusargs("BUG=%d", bug));
+
     // toggle winc for either fifos if there data in din and its first bit
     // location
     always_comb begin
@@ -71,7 +75,7 @@ module even_odd_alt #(
 				EVEN: begin
 					if (e_rinc) begin 
 						dout <= e_rdata;
-						next <= ODD;
+						next <= (bug == 1) ? EVEN : ODD;
 					end
 				end
 				ODD:  begin
