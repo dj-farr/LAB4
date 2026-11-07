@@ -6,6 +6,14 @@ interface even_odd_if #(parameter DSIZE = 8) (
     default disable iff (rst);
 
     a_even_path: assert property (
-        w_en && !din[0] && !even_odd_alt_tb.DUT.e_full |-> even_odd_alt_tb.DUT.e_winc
-    ) else $error("even write did not go to even FIFO");
+        w_en && !din[0] && !even_odd_alt_tb.DUT.e_full |-> 
+            even_odd_alt_tb.DUT.e_winc && !even_odd_alt_tb.DUT.o_winc
+    ) else $error("even write did not only go to even FIFO");
+    
+    a_odd_path: assert property (
+        w_en && din[0] && !even_odd_alt_tb.DUT.o_full |-> 
+            even_odd_alt_tb.DUT.o_winc && !even_odd_alt_tb.DUT.e_winc
+    ) else $error ("odd write did not only go to odd FIFO");
+
+    
 endinterface
