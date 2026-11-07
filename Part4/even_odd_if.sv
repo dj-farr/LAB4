@@ -10,28 +10,56 @@ interface even_odd_if #(parameter DSIZE = 8) (
             even_odd_alt_tb.DUT.e_winc && !even_odd_alt_tb.DUT.o_winc
     ) else $error("even write did not only go to even FIFO");
     
+    c_even_path: cover property (
+        w_en && !din[0] && !even_odd_alt_tb.DUT.e_full
+    );
+    
     a_odd_path: assert property (
         w_en && din[0] && !even_odd_alt_tb.DUT.o_full |-> 
             even_odd_alt_tb.DUT.o_winc && !even_odd_alt_tb.DUT.e_winc
     ) else $error ("odd write did not only go to odd FIFO");
-
+    
+    c_odd_path: cover property (
+        w_en && din[0] && !even_odd_alt_tb.DUT.o_full
+    );
+    
     a_even_then_odd: assert property (
         even_odd_alt_tb.DUT.e_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.ODD
     ) else $error("next read didn't switch to odd after an even read");
+    
+    c_even_then_odd: cover property (
+        even_odd_alt_tb.DUT.e_rinc
+    );
 
     a_odd_then_even: assert property (
         even_odd_alt_tb.DUT.o_rinc |=> even_odd_alt_tb.DUT.next == even_odd_alt_tb.DUT.EVEN
     ) else $error("next read didn't switch to even after an odd read");
-
+    
+    c_odd_then_even: cover property (
+        even_odd_alt_tb.DUT.o_rinc
+    );
+    
     a_dout_hold: assert property (
         !(even_odd_alt_tb.DUT.e_rinc || even_odd_alt_tb.DUT.o_rinc) |=> $stable(dout)
     ) else $error("dout changed without a successful read");
-
+    
+    c_dout_hold: cover property (
+        !(even_odd_alt_tb.DUT.e_rinc || even_odd_alt_tb.DUT.o_rinc)
+    );
+    
     a_even_empty_rptr: assert property (
         r_en && even_odd_alt_tb.DUT.e_empty |=> $stable(even_odd_alt_tb.DUT.even_fifo.rptr)
     ) else $error("even read pointer moved while the FIFO was empty");
+    
+    c_even_empty_rptr: cover property (
+        r_en && even_odd_alt_tb.DUT.e_empty
+    );
 
     a_odd_empty_rptr: assert property (
         r_en && even_odd_alt_tb.DUT.o_empty |=> $stable(even_odd_alt_tb.DUT.odd_fifo.rptr)
     ) else $error("odd read pointer moved while the FIFO was empty");
+
+    c_odd_empty_rptr: cover property (
+        r_en && even_odd_alt_tb.DUT.o_empty
+    );
 endinterface
