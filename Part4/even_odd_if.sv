@@ -22,4 +22,8 @@ interface even_odd_if #(parameter DSIZE = 8) (
     a_dout_hold: assert property (
         !(even_odd_alt_tb.DUT.e_rinc || even_odd_alt_tb.DUT.o_rinc) |=> $stable(dout)
     ) else $error("dout changed without a successful read");
+
+    a_even_empty_rptr: assert property (
+        r_en && even_odd_alt_tb.DUT.e_empty |=> $stable(even_odd_alt_tb.DUT.even_fifo.rptr)
+    ) else $error("even read pointer moved while the FIFO was empty");
 endinterface
