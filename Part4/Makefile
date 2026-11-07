@@ -9,6 +9,7 @@ RTL 	= fifo_mem_if.sv fifo_mem.sv async_cmp.sv rptr_empty.sv wptr_full.sv async_
 TB      = async_fifo_tb.sv
 TB2     = even_odd_alt_tb.sv
 VCS     = ${VCS_HOME}/bin/vcs -full64 -sverilog -timescale=1ns/1ps -debug_access+all -kdb -lca
+BUG    ?= 0
 
 # for all of our commands phony makes sure they don't conflict w/ filenames
 .PHONY: all compile sim1 sim2 sim3 compile_sim1 compile_sim2 compile_sim3 waves_verdi clean
@@ -42,11 +43,11 @@ sim2:
 sim3:
 	./simv +test=3 -l sim3.log
 eo_naive:
-	./simv +test=1 -l eo_naive.log
+	./simv +test=1 +BUG=$(BUG) -l eo_naive.log
 eo_case9_4:
-	./simv +test=2 -l eo_case9_4.log
+	./simv +test=2 +BUG=$(BUG) -l eo_case9_4.log
 eo_case8:
-	./simv +test=3 -l eo_case8.log
+	./simv +test=3 +BUG=$(BUG) -l eo_case8.log
 
 # launch verdi with the waves from the last scenario that ran
 waves_verdi:
