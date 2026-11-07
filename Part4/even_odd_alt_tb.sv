@@ -405,5 +405,6 @@ module even_odd_alt_tb;
     //dump waveform
     initial begin
         $fsdbDumpvars;
+		$fsdbDumpSVA;
     end
 endmodule
