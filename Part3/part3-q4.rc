@@ -2,7 +2,7 @@ Magic 271485
 Revision Verdi_W-2024.09-SP2-3
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 11 1920 796 100 65
+viewPort 0 11 956 739 238 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
@@ -16,16 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 158310.042406 583310.042406
-cursor 425000.000000
+zoom 399826.104746 631250.000000
+cursor 440000.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
-top 0
+top 7
 ; marker line index
-markerPos 24
+markerPos 23
 
 ; event list
 ; addEvent event_name event_expression
@@ -63,6 +63,17 @@ addSignal -h 16 -holdScope almost_empty
 addGroup "Fifo"
 addSignal -h 16 -UNSIGNED -HEX /async_fifo_tb/DUT/rptr[3:0]
 addSignal -h 16 -UNSIGNED -HEX -holdScope wptr[3:0]
+addSignal -h 16 -UNSIGNED -HEX /async_fifo_tb/expected[7:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope logger[31:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope errors[31:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope write_count[31:0]
+addSubGroup "scoreboard" -e FALSE
+endSubGroup "scoreboard"
+addSignal -h 16 -UNSIGNED -HEX /async_fifo_tb/sb_bad_actual[7:0]
+addSignal -h 16 -UNSIGNED -HEX -holdScope sb_bad_expected[7:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope sb_errors[31:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope sb_reads[31:0]
+addSignal -h 16 -UNSIGNED -UDEC -holdScope sb_writes[31:0]
 addGroup "wptr_full"
 addSignal -h 16 -UNSIGNED -HEX /async_fifo_tb/DUT/wptr_full/wbin[3:0]
 addGroup "rptr empty"
@@ -71,7 +82,7 @@ addGroup "mem if"
 addSignal -h 16 /async_fifo_tb/DUT/mem_if/wclken
 addSignal -h 16 -UNSIGNED -HEX -holdScope raddr[3:0]
 addSignal -h 16 -UNSIGNED -HEX -holdScope waddr[3:0]
-addGroup "G7"
+addGroup "G8"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm
@@ -82,6 +93,7 @@ getSignalForm close
 
 "/async_fifo_checker"
 "/async_fifo_tb"
+"/async_fifo_tb/DUT"
 "/async_fifo_tb/write_if"
 "/async_fifo_tb/write_if/mon_cb"
 

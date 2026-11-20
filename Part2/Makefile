@@ -69,7 +69,7 @@ eo_case8:
 
 # launch verdi with the waves from the last scenario that ran
 waves_verdi:
-	$(VERDI_HOME)/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -nologo
+	$(VERDI_HOME)/bin/verdi -dbdir ./simv.daidir -ssf novas.fsdb -sswr part2.rc -nologo &
 
 clean:
 	\rm -rf *.log *.h csrc DVEFiles simv simv.daidir ucli.key vcdplus.vpd \

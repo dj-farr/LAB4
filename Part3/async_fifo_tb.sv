@@ -66,6 +66,22 @@ module async_fifo_tb;
     fifo_read_monitor#(DSIZE) read_mon;
     fifo_scoreboard#(DSIZE, ASIZE) sb;
 
+    int sb_errors;
+    int sb_reads;
+    int sb_writes;
+    logic [DSIZE-1:0] sb_bad_expected;
+    logic [DSIZE-1:0] sb_bad_actual;
+
+    always @(negedge rclk) begin
+        if (sb != null) begin
+            sb_bad_expected = sb.last_bad_expected;
+            sb_bad_actual = sb.last_bad_actual;
+            sb_errors = sb.errors;
+            sb_reads  = sb.accepted_reads;
+            sb_writes = sb.accepted_writes;
+        end
+    end
+
     int logger = 0;
 
     initial begin

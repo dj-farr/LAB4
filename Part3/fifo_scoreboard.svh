@@ -5,6 +5,9 @@ class fifo_scoreboard #(parameter DSIZE = 8, parameter ASIZE = 4);
     localparam int DEPTH = 1 << ASIZE;
     logic [DSIZE-1:0] q[$]; // SystemVerilog reference FIFO
 
+    logic [DSIZE-1:0] last_bad_expected; // SystemVerilog reference FIFO
+    logic [DSIZE-1:0] last_bad_actual; // SystemVerilog reference FIFO
+
     int errors = 0;
     int accepted_writes = 0;
     int accepted_reads = 0;
@@ -70,6 +73,8 @@ class fifo_scoreboard #(parameter DSIZE = 8, parameter ASIZE = 4);
                         expected = q.pop_front();
                         accepted_reads++;
                         if (txn.data !== expected) begin
+                            last_bad_expected = expected;
+                            last_bad_actual   = txn.data;
                             $error("[SB] %0t read mismatch: DUT=%0h expected=%0h", txn.timestamp, txn.data, expected);
                             errors++;
                         end
